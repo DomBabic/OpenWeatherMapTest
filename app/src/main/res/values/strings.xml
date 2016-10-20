@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">RetrofitTest</string>
+
+    <string name="button_text">Search</string>
+    <string name="edittext_hint">Name of the city</string>
+
+    <!-- ListView item elements -->
+
+    <string name="latitude_view">Latitude: </string>
+    <string name="longitude_view">Longitude: </string>
+
+    <string name="city_view">City: </string>
+
+    <string name="temperature_view">Temperature: </string>
+    <string name="humidity_view">Humidity: </string>
+    <string name="pressure_view">Pressure: </string>
+
+    <string name="weather_conditions_view">Weather conditions: </string>
+
+    <string name="wind_speed_view">Wind speed: </string>
+    <string name="wind_direction_view">Wind direction: </string>
 </resources>

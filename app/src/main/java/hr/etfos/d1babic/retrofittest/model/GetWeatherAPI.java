@@ -10,7 +10,5 @@ import retrofit2.http.Query;
 public interface GetWeatherAPI {
 
     @GET("/data/2.5/weather")
-    Call<DataModel> getWeatherFromAPISyncAndAsync(@Query("lat")Double lat, @Query("lon")Double lon, @Query("APPID")
-    String
-            apiKey);
+    Call<DataModel> getWeatherFromAPI(@Query("q")String city, @Query("APPID")String apiKey);
 }

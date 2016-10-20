@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="input_box" />
+    <item type="id" name="button_search" />
+
+    <item type="id" name="city_listview" />
+
+    <item type="id" name="lat" />
+    <item type="id" name="lon" />
+
+    <item type="id" name="city" />
+
+    <item type="id" name="temperature" />
+    <item type="id" name="humidity" />
+    <item type="id" name="pressure" />
+
+    <item type="id" name="weather_conditions" />
+
+    <item type="id" name="speed" />
+    <item type="id" name="direction" />
+</resources>

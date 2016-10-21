@@ -1,12 +1,15 @@
 package hr.etfos.d1babic.retrofittest.model;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class DataModel extends RealmObject{
 
     private Main main;
     private Coord coord;
     private Wind wind;
+
+    @PrimaryKey
     private String name;
 
     public Main getMain() {

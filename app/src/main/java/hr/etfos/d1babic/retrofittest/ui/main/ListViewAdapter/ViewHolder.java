@@ -1,4 +1,4 @@
-package hr.etfos.d1babic.retrofittest.main.ListViewAdapter;
+package hr.etfos.d1babic.retrofittest.ui.main.ListViewAdapter;
 
 import android.view.View;
 import android.widget.TextView;

@@ -37,7 +37,9 @@ public class PresenterImpl implements Presenter {
         data.getMain().setHumidity(response.body().getMain().getHumidity());
         data.getMain().setPressure(response.body().getMain().getPressure());
 
+        /* Testing!
         data.setName(response.body().getName());
+        */
 
         data.getCoord().setLat(response.body().getCoord().getLat());
         data.getCoord().setLon(response.body().getCoord().getLon());

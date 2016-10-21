@@ -1,4 +1,4 @@
-package hr.etfos.d1babic.retrofittest.main;
+package hr.etfos.d1babic.retrofittest.ui.main;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -15,7 +15,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hr.etfos.d1babic.retrofittest.R;
-import hr.etfos.d1babic.retrofittest.main.ListViewAdapter.Adapter;
+import hr.etfos.d1babic.retrofittest.ui.main.ListViewAdapter.Adapter;
 import hr.etfos.d1babic.retrofittest.model.Coord;
 import hr.etfos.d1babic.retrofittest.model.DataModel;
 import hr.etfos.d1babic.retrofittest.model.GetWeatherAPI;
@@ -36,16 +36,16 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @BindView(R.id.input_box)
     EditText inputBox;
 
+    @BindView(R.id.city_listview)
+    ListView cityListView;
+
     @OnClick(R.id.button_search)
     public void fetchData() {
+
         if(!inputBox.getText().toString().isEmpty() && isNetworkAvailable()) {
 
-            String cityInput = inputBox.getText().toString();
-
-            retrofit = new Retrofit.Builder().baseUrl("http://api.openweathermap.org")
-                    .addConverterFactory(GsonConverterFactory.create()).build();
-            getWeatherAPI = retrofit.create(GetWeatherAPI.class);
-            call = getWeatherAPI.getWeatherFromAPI("" + cityInput, KEY_API);
+            initRetrofit();
+            initCall();
 
             call.enqueue(new Callback<DataModel>() {
                 @Override
@@ -54,25 +54,30 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     realm.executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            initDataObject();
-                            presenter.setData(data);
-                            presenter.setResponse(response);
-                            //TODO: Update ListView with data collected.
-                            //TODO: If data already exist, update with latest information
+                            if(checkIfDataExists()) {
+                                updateData(response);
+                                displayToast("Existing data updated!");
+                            } else {
+                                initDataObject();
+                                presenter.setData(data);
+                                presenter.setResponse(response);
+                                presenter.setRealmObjectData();
+                            }
                         }
                     });
+
+                    presenter.getRealmData();
                 }
 
                 @Override
                 public void onFailure(Call<DataModel> call, Throwable t) {
-                    Toast.makeText(getApplicationContext(), "Failed to collect data!", Toast.LENGTH_LONG).show();
+                    displayToast("Failed to collect data!");
                 }
             });
-        }
-    }
 
-    @BindView(R.id.city_listview)
-    ListView cityListView;
+        } else
+            displayToast("Input field empty and/or network unavailable!");
+    }
 
     private final static String KEY_API = "ed916196c822944545567e785f44d10f";
 
@@ -128,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     private void initDataObject() {
-        data = realm.createObject(DataModel.class);
+        data = realm.createObject(DataModel.class, inputBox.getText().toString());
         main = realm.createObject(Main.class);
         coord = realm.createObject(Coord.class);
         wind = realm.createObject(Wind.class);
@@ -137,8 +142,33 @@ public class MainActivity extends AppCompatActivity implements MainView {
         data.setWind(wind);
     }
 
+    private void initRetrofit() {
+        retrofit = new Retrofit.Builder().baseUrl("http://api.openweathermap.org")
+                .addConverterFactory(GsonConverterFactory.create()).build();
+    }
+
+    private void initCall() {
+        getWeatherAPI = retrofit.create(GetWeatherAPI.class);
+        call = getWeatherAPI.getWeatherFromAPI("" + inputBox.getText().toString(), KEY_API);
+    }
+
+    private void updateData(Response<DataModel> response) {
+        realm.copyToRealmOrUpdate(response.body());
+        realm.where(DataModel.class).equalTo("name", inputBox.getText().toString()).findFirst
+                ().getWind().setDirection();
+    }
+
+    private boolean checkIfDataExists() {
+        return realm.where(DataModel.class).equalTo("name", inputBox.getText().toString()).findFirst() != null;
+    }
+
+    private void displayToast(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
     @Override
     public void setAdapterData(List<DataModel> data) {
         adapter.setAdapterItems(data);
     }
+
 }
